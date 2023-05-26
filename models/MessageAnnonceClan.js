@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const messageAnnonceSchema = mongoose.Schema({
-  AnnoncePlayerId: { type: mongoose.Schema.Types.ObjectId, ref: 'AnnoncePlayer', required: true},
-  playerClan: { type: mongoose.Schema.Types.ObjectId, ref: 'Player', required: true},
-  ClanId: { type: mongoose.Schema.Types.ObjectId, ref: 'Clans', required: true},
+  AnnonceClanId: { type: mongoose.Schema.Types.ObjectId, ref: 'AnnonceClan', required: true},
+  player: { type: mongoose.Schema.Types.ObjectId, ref: 'Player', required: true},
   message: { type: String, required: true },
   date: { type: Date, default: Date.now }
 });

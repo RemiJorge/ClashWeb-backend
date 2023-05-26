@@ -5,9 +5,16 @@ const roleRoutes = require('./routes/role');
 const annoncePlayerRoutes = require('./routes/annoncePlayer');
 const messageAnnonceRoutes = require('./routes/messageAnnonce');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+
+var corsOptions = {
+  origin: '*'
+};
+
+app.use(cors(corsOptions));
 
 const dbUrl = process.env.DATABASE_URL;
 mongoose.connect(dbUrl,{ useNewUrlParser: true, useUnifiedTopology: true })
