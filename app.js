@@ -1,5 +1,9 @@
 const express = require('express');
 const userRoutes = require('./routes/user');
+const cocTokenRoutes = require('./routes/cocToken');
+const roleRoutes = require('./routes/role');
+const annoncePlayerRoutes = require('./routes/annoncePlayer');
+const messageAnnonceRoutes = require('./routes/messageAnnonce');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -22,5 +26,9 @@ app.use((req, res, next) => {
 
 
 app.use('/api/auth', userRoutes);
+app.use('/api/coc', cocTokenRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/annonceplayer', annoncePlayerRoutes);
+app.use('/api/messageannonce', messageAnnonceRoutes);
 
 module.exports = app;
