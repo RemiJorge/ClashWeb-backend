@@ -3,6 +3,8 @@ const User = require('../models/User');
 const Clans = require('../models/Clans');
 const Player = require('../models/Player');
 const AnnoncePlayer = require('../models/AnnoncePlayer');
+const MessageAnnonce = require('../models/MessageAnnonce');
+const MessageClan = require('../models/MessageClan');
 const ClanCtrl = require('./clans');
 
 require('dotenv').config();
@@ -13,8 +15,13 @@ const coc = new Client({ keys: [API_KEY] });
 exports.verifyToken = async (req, res, next) => {
   try {
     const user = await User.findById(req.auth.userId);
-    const tag = req.body.tag;
     const token = req.body.token;
+    //si tag n'as pas de # on le rajoute sinon on le laisse
+    let tag = req.body.tag;
+    if (tag.charAt(0) !== "#") {
+      tag = "#" + tag;
+    }
+
 
     if (user === null) {
       return res.status(404).json({ message: 'User not found!' });
@@ -22,6 +29,7 @@ exports.verifyToken = async (req, res, next) => {
       if (user.playerId !== null) {
         await Player.deleteById(user.playerId);
       }
+
 
       const player = await Player.findOne({ tag: tag });
 
@@ -57,6 +65,8 @@ exports.verifyToken = async (req, res, next) => {
           if (response.clan !== null) {
             req.body.clanTag = response.clan.tag;
             await ClanCtrl.createClan(req, res);
+            const clan = await Clans.findOne({ tag: response.clan.tag });
+            playerData.clan = clan._id;
           }
 
           const newPlayer = new Player(playerData);
@@ -110,7 +120,7 @@ exports.getPlayer = async (req, res) => {
             league: player.league
           };
 
-          if (player.lastupdate < Date.now() - 5 * 60 * 10000000) {
+          if (player.lastupdate < Date.now() - 5 * 60 * 1000) {
             const response = await coc.getPlayer(player.tag);
               playerData = {
                 tag: response.tag,
@@ -137,6 +147,8 @@ exports.getPlayer = async (req, res) => {
             if (response.clan !== null) {
               req.body.clanTag = response.clan.tag;
               await ClanCtrl.createClan(req, res);
+              const clan = await Clans.findOne({ tag: response.clan.tag });
+              playerData.clan = clan._id;
             }
             
             await player.updateOne(playerData);
@@ -184,6 +196,10 @@ exports.deletePlayer = async (req, res) =>  {
     }
     // remove annonce
     await AnnoncePlayer.deleteOne({ playerId: user.playerId });
+    //remove all message annonce
+    await MessageAnnonce.deleteMany({ playerClan: user.playerId });
+    // message clan
+    await MessageClan.deleteMany({ player: user.playerId });
     // remove player
     await Player.deleteOne({ _id: user.playerId });
     // remove player from user

@@ -1,5 +1,5 @@
 const AnnonceJoueur = require('../models/AnnoncePlayer');
-
+const MessageAnnonce = require('../models/MessageAnnonce');
 // Créer une annonce pour un joueur
 exports.createAnnoncePlayer = async (req, res, next) => {
   const { minimumLevel, minimumTrophies, description } = req.body;
@@ -55,6 +55,7 @@ exports.getAllAnnoncePlayer = async (req, res, next) => {
     }
     res.status(200).json(filteredAnnoncesJoueurs);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error });
   }
 };
@@ -133,7 +134,17 @@ exports.deleteAnnoncePlayer = async (req, res, next) => {
         return res.status(404).json({ message: "Joueur non trouvé." });
     }
 
+    // Vérifier si le joueur a une annonce
+    const annonce = AnnonceJoueur.findOne({ playerId });
+    if (!annonce) {
+      return res.status(404).json({ message: "Annonce introuvable." });
+    }
+
+    // Supprimer les messages de l'annonce
+    await MessageAnnonce.deleteMany({ AnnoncePlayerId: annonce._id });
+    
     await AnnonceJoueur.deleteOne({ playerId });
+
 
     res.status(200).json({ message: 'Annonce supprimée avec succès.' });
   } catch (error) {

@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
 const Player = require('../models/Player');
+const AnnoncePlayer = require('../models/AnnoncePlayer');
+const MessageAnnonce = require('../models/MessageAnnonce');
 /*
 // ajoute un role à la base de données "user", "moderator", "admin"
 exports.addRole = async (req, res) => {
@@ -128,7 +130,8 @@ exports.banUser = async (req, res) => {
         return res.status(403).json({ message: "L'utilisateur ne peut pas être banni." });
       }
 
-  
+
+      
       // Bannir l'utilisateur
       user.banned = true;
       await user.save();
@@ -137,6 +140,11 @@ exports.banUser = async (req, res) => {
       if (user.playerId) {
         const player = await Player.findById(user.playerId);
         if (player) {
+
+          // Supprimer les annonces du joueur
+          await AnnoncePlayer.deleteMany({ playerId: player._id });
+          // Supprimer les messages du joueur
+          await MessageAnnonce.deleteMany({ playerClan: player._id });
           player.banned = true;
           await player.save();
         }

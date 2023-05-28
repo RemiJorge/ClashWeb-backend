@@ -53,3 +53,25 @@ exports.getMessagesByAnnonce = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
+
+// supprimer un message
+exports.deleteMessage = async (req, res, next) => {
+  try{
+    const messageId = req.params.id;
+    const message = await MessageAnnonce.findById(messageId);
+    if (message === null) {
+      return res.status(404).json({ message: 'Message not found!' });
+    }
+    const playerClan = await Player.findOne({ _id: req.auth.playerId });
+    if (playerClan === null) {
+      return res.status(404).json({ message: "no player" });
+    }
+    await message.deleteOne();
+    res.status(200).json({ message: 'Message removed' });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+};
+

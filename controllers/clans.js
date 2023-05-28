@@ -12,7 +12,19 @@ exports.createClan = async (req, res, next) => {
         const clan = await Clans.findOne({tag: tag});
         if (clan === null) {
             const response = await coc.getClan(tag);
-            const newClan = new Clans({...response, lastupdate: Date.now()});
+            const clanData = {
+                tag: response.tag,            
+                name: response.name,
+                level: response.level,
+                description: response.description,
+                clanPoints: response.points,
+                clanVersusPoints: response.versusPoints,
+                badge: response.badge,
+                type: response.type,
+                members: response.memberCount,
+                lastupdate: Date.now()
+            };
+            const newClan = new Clans(clanData);
             await newClan.save();
         }
         else {
