@@ -43,7 +43,7 @@ exports.createAnnonceClan = async (req, res, next) => {
       minimumTrophies,
       description: truncatedDescription,
     });
-
+    console.log("minimumTh : " + minimumTh);
     await annonceClan.save();
     res.status(201).json({ message: 'Annonce créée avec succès.' });
   } catch (error) {

@@ -46,7 +46,7 @@ exports.getMessagesByAnnonce = async (req, res, next) => {
     const playerId = req.auth.playerId;
     const AnnoncePlayer = await AnnonceJoueur.findOne({ playerId });
     const AnnoncePlayerId = AnnoncePlayer._id;
-    const messages = await MessageAnnonce.find({ AnnoncePlayerId }).populate('ClanId').populate('playerClan', "name expLevel role");
+    const messages = await MessageAnnonce.find({ AnnoncePlayerId }).populate('ClanId').populate('playerClan', "name expLevel role tag");
     res.status(200).json(messages);
   } catch (error) {
     console.error(error);

@@ -70,7 +70,7 @@ exports.getAnnoncePlayer = async (req, res) => {
 
         //populate with player but only clan and role
         // then populate with playerId.clan but only clanPoints, level and members
-        const annonce = await AnnonceJoueur.findOne({ playerId }).populate({path: 'playerId', select: 'clan role', populate: {path: 'clan', select: 'clanPoints level members'}});
+        const annonce = await AnnonceJoueur.findOne({ playerId }).populate({path: 'playerId', select: 'clan role tag', populate: {path: 'clan', select: 'clanPoints level members'}});
     
         if (!annonce) {
             return res.status(404).json({ message: 'no annonce found' });
